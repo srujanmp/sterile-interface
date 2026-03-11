@@ -3,23 +3,40 @@ import os
 
 image_folder = "images"
 
-images = [os.path.join(image_folder, img) for img in os.listdir(image_folder)]
+images = sorted([os.path.join(image_folder, img) for img in os.listdir(image_folder) 
+                 if img.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp'))])
+
+if not images:
+    print("No images found in 'images' folder!")
+    exit(1)
+
+print(f"Loaded {len(images)} images")
+print("Controls: Left/Right arrows to navigate, +/- to zoom, q/ESC to quit")
 
 index = 0
 zoom = 1.0
 
+cv2.namedWindow("Medical Viewer", cv2.WINDOW_NORMAL)
+
 while True:
 
     img = cv2.imread(images[index])
+    if img is None:
+        index = (index + 1) % len(images)
+        continue
+        
     h, w = img.shape[:2]
-
-    resized = cv2.resize(img, (int(w*zoom), int(h*zoom)))
+    new_w, new_h = int(w*zoom), int(h*zoom)
+    if new_w > 0 and new_h > 0:
+        resized = cv2.resize(img, (new_w, new_h))
+    else:
+        resized = img
 
     cv2.imshow("Medical Viewer", resized)
 
-    key = cv2.waitKey(100)
+    key = cv2.waitKey(50) & 0xFF  # Mask to get proper key code
 
-    if key == ord('q'):
+    if key == ord('q') or key == 27:  # q or ESC
         break
 
     elif key == 81:   # left arrow
@@ -32,6 +49,7 @@ while True:
         zoom += 0.1
 
     elif key == ord('-'):
-        zoom -= 0.1
+        zoom = max(0.1, zoom - 0.1)  # Prevent zoom going to 0
 
 cv2.destroyAllWindows()
+cv2.waitKey(1)  # Ensure window closes

@@ -6,6 +6,11 @@ The system uses **computer vision and depth estimation** to recognize hand gestu
 This helps maintain a **sterile operating room environment**.
 
 ---
+# Terminal 1 - Run the image viewer
+source venv/bin/activate && python viewer.py
+
+# Terminal 2 - Run gesture control (after viewer is open)
+source venv/bin/activate && python gesture_control.py
 
 # Features
 
@@ -258,3 +263,14 @@ Possible upgrades include:
 # Author
 
 Developed as a **Computer Vision project for gesture-based sterile interfaces in surgical environments**.
+
+
+Install the Smaller CPU Version Instead
+
+Run:
+
+pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+Then install the remaining packages:
+
+pip install opencv-python mediapipe numpy pyautogui
